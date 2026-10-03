@@ -104,8 +104,4 @@ Además de los requisitos obligatorios, se agregaron mejoras:
 
 ## 9. Uso de Inteligencia Artificial – Ficha de Transparencia
 adjuntado en un archivo word:
-
-Prompt exacto	"sobre este codigo y trabajo ayudame a realizar un readme a modo de informe" (se adjuntaron index.html y el enunciado del TP13).
-Fundamentación	Ahorrar tiempo en la redacción y cubrir todos los puntos del enunciado. El contenido técnico describe mi propio código.
-Aprendizaje y Verificación	Aprendí cómo se estructura un informe técnico en un README. Verifiqué que cada dato coincidiera con mi código y con lo que pide el enunciado antes de publicarlo.
 ---
