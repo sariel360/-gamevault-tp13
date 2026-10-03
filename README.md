@@ -104,40 +104,7 @@ Además de los requisitos obligatorios, se agregaron mejoras:
 
 ## 9. Uso de Inteligencia Artificial – Ficha de Transparencia
 adjuntado en un archivo word:
----
-Memoria recuperada
-Ficha 1 – Corrección de errores de sintaxis
-Campo	Detalle
-Herramienta	Claude (Anthropic)
-Objetivo	Detectar y corregir errores de sintaxis en el código de index.html.
-Prompt exacto	No se conservó el chat. Reconstrucción aproximada: se pasó el código completo y se pidió que corrigiera los errores de sintaxis.
-Fundamentación	Después de armar la página me fallaban algunas partes y no encontraba el error a simple vista. Usé IA para revisar el código más rápido, sobre todo etiquetas sin cerrar y comillas o atributos mal escritos.
-Aprendizaje y Verificación	Aprendí a leer mejor la estructura del HTML y a revisar que cada etiqueta esté bien abierta y cerrada. Verifiqué abriendo la página en el navegador, comprobando que se viera completa y redimensionando la ventana para ver que seguía funcionando.
-Ficha 2 – Comentarios en el código
-Campo	Detalle
-Herramienta	Claude (Anthropic)
-Objetivo	Agregar comentarios que separen y expliquen las secciones (requisito 6 del TP).
-Prompt exacto	No se conservó el chat. Reconstrucción aproximada: se pasó nuevamente el código completo y se pidió que agregara comentarios.
-Fundamentación	Para cumplir el requisito 6 de forma ordenada y sin perder tiempo comentando línea por línea. El código ya era mío, solo necesitaba que quedara documentado y fácil de recorrer.
-Aprendizaje y Verificación	Aprendí cómo dividir un archivo en secciones (barra de navegación, catálogo, tabla, favoritos, modales, scripts). Verifiqué leyendo que cada comentario describiera bien su sección y abriendo la página para confirmar que los comentarios no rompieron nada.
-Ficha 3 – Integración con los juegos propios (TP10 y TP11)
-Campo	Detalle
-Herramienta	Claude (Anthropic)
-Objetivo	Integrar la página con los otros dos códigos (Asteroides y Rush Track) para poder jugarlos desde el catálogo.
-Prompt exacto	No se conservó el chat. Reconstrucción aproximada: se pasó el código completo junto con los de los dos juegos y se pidió que los integrara a la página.
-Fundamentación	Unir tres códigos distintos (la página y dos juegos con Canvas) era la parte más difícil por posibles conflictos de nombres, rutas y scripts. Usé IA para resolver esa integración, ya que los dos juegos los había programado yo en el TP10 y el TP11.
-Aprendizaje y Verificación	Aprendí cómo se enlazan archivos y cómo abrir un juego desde un modal o una página aparte. Verifiqué jugando ambos desde el catálogo, comprobando que cargaran, respondieran a los controles y no afectaran al resto de la página.
-Ficha 4 – Nombres y descripciones de los juegos
-Campo	Detalle
-Herramienta	Claude (Anthropic)
-Objetivo	Generar nombres y descripciones breves para los juegos ficticios del catálogo.
-Prompt exacto	No se conservó el chat. Reconstrucción aproximada: se pidió una descripción breve y un nombre para cada juego del catálogo.
-Fundamentación	Inventar muchos nombres y textos cortos lleva tiempo y no es el objetivo del TP, que se centra en Bootstrap y la maquetación. Usé IA solo para el contenido de relleno del catálogo.
-Aprendizaje y Verificación	Aprendí a pedir textos de largo y estilo acotados. Verifiqué leyendo todos los nombres y descripciones, corrigiendo los que no me convencían y comprobando que entraran bien en las tarjetas sin desacomodar el diseño.
-Ficha 5 – Redacción de este informe
-Campo	Detalle
-Herramienta	Claude (Anthropic)
-Objetivo	Organizar la documentación del trabajo en un README con formato de informe.
+
 Prompt exacto	"sobre este codigo y trabajo ayudame a realizar un readme a modo de informe" (se adjuntaron index.html y el enunciado del TP13).
 Fundamentación	Ahorrar tiempo en la redacción y cubrir todos los puntos del enunciado. El contenido técnico describe mi propio código.
 Aprendizaje y Verificación	Aprendí cómo se estructura un informe técnico en un README. Verifiqué que cada dato coincidiera con mi código y con lo que pide el enunciado antes de publicarlo.
