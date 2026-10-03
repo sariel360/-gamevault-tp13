@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rush Track — TP11</title>
+  <meta name="description" content="Mini-juego de esquive en Canvas: cargá nitro y no choques." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ===================== ESCENARIO DEL JUEGO ===================== -->
+  <main class="cockpit">
+
+    <header class="dash-header">
+      <h1>RUSH TRACK</h1>
+      <p class="subtitle">Trabajo Práctico 11 · Laboratorio de Programación</p>
+    </header>
+
+    <div class="stage">
+
+      <!-- Lienzo donde se dibuja toda la lógica del juego -->
+      <canvas id="game" width="480" height="720" aria-label="Área de juego"></canvas>
+
+      <!-- Tablero de instrumentos (HUD) superpuesto al canvas -->
+      <div class="hud">
+        <div class="gauge">
+          <span class="gauge-label">Distancia</span>
+          <span class="gauge-value" id="score">0<small> m</small></span>
+        </div>
+        <div class="gauge">
+          <span class="gauge-label">Récord</span>
+          <span class="gauge-value" id="best">0<small> m</small></span>
+        </div>
+        <div class="nitro">
+          <span class="gauge-label">Nitro</span>
+          <div class="nitro-track">
+            <div class="nitro-fill" id="nitroFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pantalla de inicio -->
+      <section class="overlay" id="startOverlay">
+        <h2>Arrancá motores</h2>
+        <p>Esquivá el tráfico, juntá nitro y llegá lo más lejos posible.</p>
+        <ul class="controls-list">
+          <li><span class="keys"><kbd>&larr;</kbd><kbd>&rarr;</kbd></span> o <span class="keys"><kbd>A</kbd><kbd>D</kbd></span> — cambiar de carril</li>
+          <li><span class="keys"><kbd>Espacio</kbd></span> — activar nitro</li>
+          <li><span class="keys"><kbd>P</kbd></span> — pausar</li>
+        </ul>
+        <button class="ignition" id="startBtn" type="button">Salir a pista</button>
+      </section>
+
+      <!-- Pantalla de pausa -->
+      <section class="overlay hidden" id="pauseOverlay">
+        <h2>Pausa</h2>
+        <button class="ignition" id="resumeBtn" type="button">Reanudar</button>
+      </section>
+
+      <!-- Pantalla de choque / fin de partida -->
+      <section class="overlay hidden" id="gameOverOverlay">
+        <h2>Choque</h2>
+        <p>Distancia recorrida: <strong><span id="finalScore">0</span> m</strong></p>
+        <p class="new-best hidden" id="newBestMsg">Nuevo récord</p>
+        <button class="ignition" id="restartBtn" type="button">Volver a pista</button>
+      </section>
+
+    </div>
+
+    <footer class="dash-footer">
+      <p>IPET N°249 "Nicolás Copérnico" · Laboratorio de Programación 6° G</p>
+    </footer>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>

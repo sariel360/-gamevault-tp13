@@ -1,0 +1,326 @@
+/* =========================================================================
+   RUSH TRACK — estilos
+   Paleta: asfalto oscuro + rojo de carrera + cian nitro.
+   ========================================================================= */
+
+:root {
+  --asphalt-950: #0d0f12;
+  --asphalt-800: #1b1f24;
+  --graphite-700: #2a2f36;
+  --line-yellow: #ffc93c;
+  --race-red: #ff3b30;
+  --race-red-dim: #7a1e19;
+  --nitro-cyan: #4ce0d2;
+  --paper: #ecebe6;
+  --paper-dim: #9aa0a6;
+
+  --font-display: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Consolas", "SFMono-Regular", "Menlo", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background:
+    radial-gradient(ellipse at 50% -10%, #23272e 0%, var(--asphalt-950) 55%);
+  color: var(--paper);
+  font-family: var(--font-display);
+}
+
+/* ===================== MARCO / COCKPIT ===================== */
+
+.cockpit {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.dash-header {
+  text-align: center;
+}
+
+.dash-header h1 {
+  margin: 0;
+  font-size: clamp(28px, 7vw, 36px);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--paper);
+  text-shadow: 0 0 18px rgba(255, 59, 48, 0.35);
+}
+
+.subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+
+/* El "stage" imita el bisel de un cockpit de simracing: marco grueso,
+   remaches en las esquinas y una leve curvatura de vidrio. */
+.stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 480 / 720;
+  background: var(--graphite-700);
+  border-radius: 22px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 1px #000,
+    inset 0 0 0 2px #40464e,
+    0 20px 50px -20px rgba(0, 0, 0, 0.8);
+}
+
+.stage > canvas {
+  border-radius: 14px;
+}
+
+/* remaches decorativos en las cuatro esquinas del bisel, ubicados por
+   porcentaje para que escalen bien en pantallas chicas */
+.stage {
+  background-image:
+    radial-gradient(circle, #6b737d 0 2px, transparent 2.5px),
+    radial-gradient(circle, #6b737d 0 2px, transparent 2.5px),
+    radial-gradient(circle, #6b737d 0 2px, transparent 2.5px),
+    radial-gradient(circle, #6b737d 0 2px, transparent 2.5px);
+  background-repeat: no-repeat;
+  background-size: 6px 6px;
+  background-position:
+    14px 14px,
+    calc(100% - 14px) 14px,
+    14px calc(100% - 14px),
+    calc(100% - 14px) calc(100% - 14px);
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--asphalt-950);
+}
+
+/* ===================== HUD ===================== */
+
+.hud {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+  right: 22px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  pointer-events: none;
+  font-family: var(--font-mono);
+}
+
+.gauge {
+  display: flex;
+  flex-direction: column;
+  background: rgba(13, 15, 18, 0.55);
+  border: 1px solid rgba(236, 235, 230, 0.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  backdrop-filter: blur(2px);
+}
+
+.gauge-label {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--paper-dim);
+}
+
+.gauge-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--paper);
+}
+
+.gauge-value small {
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--paper-dim);
+}
+
+.nitro {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(13, 15, 18, 0.55);
+  border: 1px solid rgba(236, 235, 230, 0.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  backdrop-filter: blur(2px);
+}
+
+.nitro-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(236, 235, 230, 0.12);
+  overflow: hidden;
+}
+
+.nitro-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #1c8f86, var(--nitro-cyan));
+  box-shadow: 0 0 10px var(--nitro-cyan);
+  transition: width 0.1s linear;
+}
+
+.nitro-fill.boosting {
+  animation: pulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { filter: brightness(1); }
+  to   { filter: brightness(1.5); }
+}
+
+/* ===================== PANTALLAS SUPERPUESTAS ===================== */
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px;
+  text-align: center;
+  background: rgba(13, 15, 18, 0.88);
+  border-radius: 14px;
+}
+
+.overlay.hidden {
+  display: none;
+}
+
+.overlay h2 {
+  margin: 0;
+  font-size: 26px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.overlay p {
+  margin: 0;
+  color: var(--paper-dim);
+  max-width: 32ch;
+}
+
+.controls-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--paper);
+}
+
+.keys {
+  display: inline-flex;
+  gap: 4px;
+  margin-right: 4px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 20px;
+  padding: 3px 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-align: center;
+  background: var(--asphalt-800);
+  border: 1px solid #454b53;
+  border-bottom-width: 3px;
+  border-radius: 5px;
+  color: var(--paper);
+}
+
+.ignition {
+  margin-top: 6px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  background: var(--race-red);
+  color: var(--paper);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -8px rgba(255, 59, 48, 0.7);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+}
+
+.ignition:hover {
+  background: #ff5147;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -8px rgba(255, 59, 48, 0.85);
+}
+
+.ignition:active {
+  transform: translateY(1px);
+}
+
+.ignition:focus-visible {
+  outline: 3px solid var(--nitro-cyan);
+  outline-offset: 3px;
+}
+
+.new-best {
+  color: var(--nitro-cyan) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+}
+
+/* ===================== PIE ===================== */
+
+.dash-footer {
+  font-size: 11px;
+  color: var(--paper-dim);
+  text-align: center;
+}
+
+/* ===================== ACCESIBILIDAD / RESPONSIVE ===================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .nitro-fill.boosting {
+    animation: none;
+  }
+  .ignition {
+    transition: none;
+  }
+}
+
+@media (max-width: 380px) {
+  .hud {
+    font-size: 11px;
+  }
+  .gauge-value {
+    font-size: 15px;
+  }
+}

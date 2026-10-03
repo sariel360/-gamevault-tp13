@@ -1,0 +1,141 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: radial-gradient(ellipse at center, #0b0d21 0%, #000000 100%);
+  color: #e8f1ff;
+  font-family: 'Courier New', Courier, monospace;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+h1 {
+  letter-spacing: 8px;
+  color: #7ce0ff;
+  text-shadow: 0 0 12px #2ea6d6;
+}
+
+#hud {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 800px;
+  max-width: 90vw;
+  justify-content: space-between;
+  font-size: 1.1rem;
+  color: #b7e6ff;
+}
+
+#highscore {
+  color: #ffdd57;
+}
+
+#mute-btn {
+  margin-top: 0;
+  padding: 4px 10px;
+  font-size: 1rem;
+  line-height: 1;
+  background: transparent;
+  border: 1px solid #2ea6d6;
+  color: #7ce0ff;
+}
+
+#mute-btn:hover {
+  background: rgba(46, 166, 214, 0.2);
+  transform: none;
+}
+
+#new-record {
+  color: #ffdd57 !important;
+  font-weight: bold;
+}
+
+#gameCanvas {
+  background: #000000;
+  border: 2px solid #2ea6d6;
+  box-shadow: 0 0 20px rgba(46, 166, 214, 0.5);
+  max-width: 90vw;
+  display: block;
+}
+
+#overlay {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.screen {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(5, 8, 20, 0.95);
+  border: 2px solid #2ea6d6;
+  border-radius: 10px;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(46, 166, 214, 0.6);
+  min-width: 300px;
+}
+
+.screen.hidden {
+  display: none;
+}
+
+.screen h2 {
+  color: #ffdd57;
+  margin-bottom: 10px;
+}
+
+.screen p {
+  margin: 6px 0;
+  font-size: 0.95rem;
+  color: #cfe8ff;
+}
+
+.controls {
+  font-size: 0.85rem !important;
+  color: #7ce0ff !important;
+  margin-top: 12px !important;
+}
+
+button {
+  margin-top: 16px;
+  padding: 10px 24px;
+  font-family: inherit;
+  font-size: 1rem;
+  background: #2ea6d6;
+  color: #05121c;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+
+button:hover {
+  background: #7ce0ff;
+  transform: scale(1.05);
+}
+
+.footer {
+  color: #4a6478;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* GameVault: que el canvas se adapte al ancho del visor */
+canvas#gameCanvas { max-width: 100%; height: auto; }

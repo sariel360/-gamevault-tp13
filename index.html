@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<!-- =====================================================================
+     TP13 - Laboratorio de Programación - 6° G
+     "Gestor de Juegos Responsivo con Bootstrap" - Versión mejorada
+     Alumno: Gabriel Sánchez Sarria
+     Estructura: HTML (Bootstrap) + CSS de acentos + JS que mejora la página
+     ===================================================================== -->
+
+<!-- Requisito: modo oscuro global con data-bs-theme="dark" en <html> -->
+<html lang="es" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GameVault: gestor de juegos retro e indies hecho con Bootstrap.">
+  <meta name="theme-color" content="#212529">
+  <title>GameVault | Gestor de Juegos</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+
+  <!-- Tipografía retro (sólo para títulos) -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- Requisito: Bootstrap 5 (última 5.x) por CDN en el <head> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- CSS propio: sólo detalles visuales. La estructura la maneja Bootstrap -->
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 4.5rem; }
+    body { background: radial-gradient(900px 420px at 50% -8%, rgba(255, 193, 7, .14), transparent), var(--bs-body-bg); }
+    .retro { font-family: 'Press Start 2P', monospace; line-height: 1.4; }
+    .titulo-hero { font-size: clamp(1.5rem, 7vw, 3rem); }
+    .juego { cursor: pointer; transition: transform .2s, border-color .2s; }
+    .juego:hover, .juego:focus-visible { transform: translateY(-4px); border-color: var(--bs-warning); outline: 0; }
+    .cover { position: relative; display: flex; justify-content: center; align-items: center; padding: 1.5rem 0; }
+    .card .cover { border-radius: var(--bs-card-inner-border-radius) var(--bs-card-inner-border-radius) 0 0; }
+    .btn-fav { width: 2.25rem; height: 2.25rem; padding: 0; border-radius: 50%; }
+    #tabla-juegos tbody tr { cursor: pointer; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .juego { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= BARRA DE NAVEGACIÓN ================= -->
+  <nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom sticky-top">
+    <div class="container">
+      <a class="navbar-brand retro fs-6 text-warning" href="#inicio">🎮 GameVault</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu"
+        aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="#catalogo">Catálogo</a></li>
+          <li class="nav-item"><a class="nav-link" href="#biblioteca">Biblioteca</a></li>
+          <li class="nav-item"><a class="nav-link" href="#estadisticas">Estadísticas</a></li>
+        </ul>
+        <!-- Buscador en vivo -->
+        <form class="d-flex ms-lg-3 mt-3 mt-lg-0" role="search" id="form-buscar">
+          <input class="form-control" type="search" id="buscar" placeholder="Buscar juego…" aria-label="Buscar juego">
+        </form>
+        <!-- Acceso rápido a favoritos -->
+        <button type="button" class="btn btn-outline-warning ms-lg-2 mt-2 mt-lg-0" id="btn-favs">
+          ♥ Favoritos <span id="badge-favs" class="badge text-bg-warning">0</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+  <!-- Fin de la barra de navegación -->
+
+
+  <!-- Requisito: contenido principal dentro de un <div> con la clase "container" -->
+  <div class="container">
+
+    <!-- ================= HERO ================= -->
+    <!-- text-center (alineación), text-warning (color), py-5 (padding vertical) -->
+    <header id="inicio" class="hero text-center py-5">
+      <h1 class="retro titulo-hero text-warning mb-4">GameVault</h1>
+      <p class="lead text-secondary mx-auto" style="max-width: 40rem;">
+        Tu biblioteca digital de juegos retro e indies. Buscá, filtrá, guardá tus favoritos e instalá.
+      </p>
+      <div class="d-flex flex-wrap justify-content-center gap-2">
+        <a href="#catalogo" class="btn btn-warning btn-lg">Explorar catálogo</a>
+        <a href="#biblioteca" class="btn btn-outline-primary btn-lg">Ver biblioteca</a>
+      </div>
+    </header>
+    <!-- Fin del hero -->
+
+
+    <!-- ================= ESTADÍSTICAS (se calculan en vivo) ================= -->
+    <section id="estadisticas" class="py-4">
+      <h2 class="h4 text-primary text-center mb-4">Estadísticas</h2>
+      <div class="row g-3 text-center">
+        <!-- p-4: relleno en todos los lados -->
+        <div class="col-6 col-lg-3"><div class="border rounded p-4 h-100"><p class="display-6 fw-bold text-warning mb-1" id="st-total">0</p><p class="text-secondary small mb-0">Juegos en el catálogo</p></div></div>
+        <div class="col-6 col-lg-3"><div class="border rounded p-4 h-100"><p class="display-6 fw-bold text-warning mb-1" id="st-inst">0</p><p class="text-secondary small mb-0">Instalados</p></div></div>
+        <div class="col-6 col-lg-3"><div class="border rounded p-4 h-100"><p class="display-6 fw-bold text-warning mb-1" id="st-favs">0</p><p class="text-secondary small mb-0">Favoritos</p></div></div>
+        <div class="col-6 col-lg-3"><div class="border rounded p-4 h-100"><p class="display-6 fw-bold text-warning mb-1" id="st-valor">US$ 0</p><p class="text-secondary small mb-0">Valor de tu biblioteca</p></div></div>
+      </div>
+    </section>
+    <!-- Fin de las estadísticas -->
+
+
+    <!-- ================= CATÁLOGO ================= -->
+    <section id="catalogo" class="py-4">
+      <h2 class="h4 text-primary text-center mb-4">Catálogo</h2>
+
+      <!-- Barra de filtros -->
+      <div class="row g-2 align-items-center mb-3">
+        <div class="col-12 col-lg d-flex flex-wrap gap-2">
+          <input type="radio" class="btn-check" name="estado" id="e-todos" value="todos" checked>
+          <label class="btn btn-outline-warning btn-sm" for="e-todos">Todos</label>
+          <input type="radio" class="btn-check" name="estado" id="e-inst" value="Instalado">
+          <label class="btn btn-outline-warning btn-sm" for="e-inst">Instalados</label>
+          <input type="radio" class="btn-check" name="estado" id="e-disp" value="Disponible">
+          <label class="btn btn-outline-warning btn-sm" for="e-disp">Disponibles</label>
+          <input type="radio" class="btn-check" name="estado" id="e-prox" value="Próximamente">
+          <label class="btn btn-outline-warning btn-sm" for="e-prox">Próximamente</label>
+        </div>
+        <div class="col-6 col-lg-3">
+          <select class="form-select form-select-sm" id="genero" aria-label="Filtrar por género">
+            <option value="todos">Todos los géneros</option>
+          </select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <select class="form-select form-select-sm" id="orden" aria-label="Ordenar">
+            <option value="id">Orden original</option>
+            <option value="nombre">Nombre (A-Z)</option>
+            <option value="precio-asc">Precio: menor a mayor</option>
+            <option value="precio-desc">Precio: mayor a menor</option>
+            <option value="anio">Más nuevos</option>
+          </select>
+        </div>
+        <div class="col-12 col-lg-auto">
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="solo-favs">
+            <label class="form-check-label small" for="solo-favs">Sólo favoritos</label>
+          </div>
+        </div>
+      </div>
+      <p class="text-secondary small" id="contador" aria-live="polite"></p>
+
+      <!-- Grilla de Bootstrap: 1 columna en celular, 2 en tablet, 4 en PC. El JS arma las tarjetas desde la tabla -->
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4" id="grilla"></div>
+      <!-- Fin de la grilla -->
+
+      <div id="vacio" class="alert alert-secondary text-center py-4 mt-3 d-none">
+        Ningún juego coincide con tu búsqueda.
+        <button type="button" class="btn btn-link p-0 align-baseline" id="limpiar">Limpiar filtros</button>
+      </div>
+    </section>
+    <!-- Fin del catálogo -->
+
+
+    <!-- ================= TABLA DE LA BIBLIOTECA ================= -->
+    <section id="biblioteca" class="py-4">
+      <h2 class="h4 text-primary text-center mb-4">Mi biblioteca</h2>
+
+      <!-- table-responsive: en pantallas chicas la tabla se desliza horizontalmente -->
+      <div class="table-responsive">
+        <!-- Fuente de datos: el JS lee estos data-* para armar las tarjetas y el detalle -->
+        <table class="table table-striped table-hover align-middle" id="tabla-juegos">
+          <caption class="text-secondary">Tocá una fila para ver el detalle del juego.</caption>
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Nombre del Juego</th>
+              <th scope="col">Género</th>
+              <th scope="col" class="text-center">Año</th>
+              <th scope="col" class="text-end">Precio</th>
+              <th scope="col" class="text-center">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-id="1" data-estado="Instalado" data-precio="0" data-emoji="☄️" data-c="#3b0764,#0d6efd" data-rating="4.8" data-juego="juegos/asteroides/index.html" data-desc="Mi TP10: pilotá la nave, destruí asteroides y juntá power-ups. Jugalo acá mismo.">
+              <th scope="row">1</th><td>Asteroides</td><td>Arcade espacial</td><td class="text-center">2026</td><td class="text-end text-success">Gratis</td><td class="text-center"><span class="badge text-bg-success">Instalado</span></td>
+            </tr>
+            <tr data-id="2" data-estado="Instalado" data-precio="0" data-emoji="🏁" data-c="#fd7e14,#212529" data-rating="4.7" data-juego="juegos/rush-track/index.html" data-desc="Mi TP11: esquivá conos y autos en tres carriles y usá el nitro. Jugalo acá mismo.">
+              <th scope="row">2</th><td>Rush Track</td><td>Carreras / Esquive</td><td class="text-center">2026</td><td class="text-end text-success">Gratis</td><td class="text-center"><span class="badge text-bg-success">Instalado</span></td>
+            </tr>
+            <tr data-id="3" data-estado="Instalado" data-precio="4.99" data-emoji="🚀" data-c="#0d6efd,#6610f2" data-rating="4.5" data-desc="Defendé la galaxia desde una nave con mate incluido.">
+              <th scope="row">3</th><td>Astro Gaucho</td><td>Shooter espacial</td><td class="text-center">1988</td><td class="text-end">US$ 4,99</td><td class="text-center"><span class="badge text-bg-success">Instalado</span></td>
+            </tr>
+            <tr data-id="4" data-estado="Instalado" data-precio="7.99" data-emoji="🏎️" data-c="#dc3545,#fd7e14" data-rating="4.2" data-desc="Picadas arcade por rutas rectas hasta el horizonte.">
+              <th scope="row">4</th><td>Turbo Pampa 86</td><td>Carreras</td><td class="text-center">1986</td><td class="text-end">US$ 7,99</td><td class="text-center"><span class="badge text-bg-success">Instalado</span></td>
+            </tr>
+            <tr data-id="5" data-estado="Disponible" data-precio="12.99" data-emoji="🗡️" data-c="#198754,#20c997" data-rating="4.7" data-desc="Mazmorras nuevas en cada partida. Si perdés, empezás de cero.">
+              <th scope="row">5</th><td>Dungeon de Bytes</td><td>Roguelike / RPG</td><td class="text-center">2021</td><td class="text-end">US$ 12,99</td><td class="text-center"><span class="badge text-bg-primary">Disponible</span></td>
+            </tr>
+            <tr data-id="6" data-estado="Instalado" data-precio="0" data-emoji="🧩" data-c="#0dcaf0,#6f42c1" data-rating="4.0" data-desc="Caminos que existen y no existen a la vez. Gratis para siempre.">
+              <th scope="row">6</th><td>Laberinto Cuántico</td><td>Puzzle</td><td class="text-center">2019</td><td class="text-end text-success">Gratis</td><td class="text-center"><span class="badge text-bg-success">Instalado</span></td>
+            </tr>
+            <tr data-id="7" data-estado="Próximamente" data-precio="5.99" data-emoji="⚽" data-c="#6c757d,#198754" data-rating="4.4" data-desc="Partidos de potrero en 16 bits, con gambetas y pelotazos.">
+              <th scope="row">7</th><td>Pixel Fútbol '94</td><td>Deportes</td><td class="text-center">2027</td><td class="text-end">US$ 5,99</td><td class="text-center"><span class="badge text-bg-secondary">Próximamente</span></td>
+            </tr>
+            <tr data-id="8" data-estado="Disponible" data-precio="9.99" data-emoji="🤖" data-c="#ffc107,#dc3545" data-rating="4.1" data-desc="Robots gigantes, combos y un ring que se desarma.">
+              <th scope="row">8</th><td>Mecha Arena</td><td>Lucha</td><td class="text-center">2023</td><td class="text-end">US$ 9,99</td><td class="text-center"><span class="badge text-bg-primary">Disponible</span></td>
+            </tr>
+            <tr data-id="9" data-estado="Disponible" data-precio="8.49" data-emoji="🌾" data-c="#198754,#6610f2" data-rating="4.6" data-desc="Una granja que sólo crece de noche. Ojo con lo que sembrás.">
+              <th scope="row">9</th><td>Cosecha Nocturna</td><td>Simulación</td><td class="text-center">2024</td><td class="text-end">US$ 8,49</td><td class="text-center"><span class="badge text-bg-primary">Disponible</span></td>
+            </tr>
+            <tr data-id="10" data-estado="Próximamente" data-precio="6.49" data-emoji="🎵" data-c="#6f42c1,#212529" data-rating="4.3" data-desc="Saltá al ritmo de la música para escapar de la cripta.">
+              <th scope="row">10</th><td>Cripta Sonora</td><td>Plataformas</td><td class="text-center">2027</td><td class="text-end">US$ 6,49</td><td class="text-center"><span class="badge text-bg-secondary">Próximamente</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Fin de la tabla -->
+      </div>
+      <!-- Fin div de la tabla -->
+    </section>
+    <!-- Fin de la biblioteca -->
+
+  </div>
+  <!-- Fin del container principal -->
+
+
+  <!-- ================= PIE DE PÁGINA ================= -->
+  <footer class="border-top mt-4 py-4 text-center text-secondary">
+    <div class="container">
+      <p class="mb-1">TP13 · Laboratorio de Programación · 6° G · IPET 249 Nicolás Copérnico</p>
+      <p class="mb-0 small">Hecho por Gabriel Sánchez Sarria con HTML5, Bootstrap y anime.js. Asteroides (TP10) y Rush Track (TP11) son juegos propios. Juegos y precios ficticios.</p>
+    </div>
+  </footer>
+  <!-- Fin del pie de página -->
+
+
+  <!-- ================= MODAL DE DETALLE ================= -->
+  <div class="modal fade" id="modalJuego" tabindex="-1" aria-labelledby="m-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h4" id="m-titulo"></h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div id="m-cover" class="cover rounded mb-3"><span class="display-1" id="m-emoji" aria-hidden="true"></span></div>
+          <p class="text-primary mb-1" id="m-genero"></p>
+          <p class="text-warning mb-2" id="m-rating"></p>
+          <p id="m-desc"></p>
+          <p class="h5 mb-0" id="m-precio"></p>
+          <div id="m-progreso" class="progress mt-3 d-none" role="progressbar" aria-label="Instalación" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div id="m-barra" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-danger" id="m-fav"></button>
+          <button type="button" class="btn" id="m-accion"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Fin del modal -->
+
+  <!-- ================= MODAL PARA JUGAR (iframe) ================= -->
+  <div class="modal fade" id="modalPlay" tabindex="-1" aria-labelledby="p-titulo" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-fullscreen-md-down">
+      <div class="modal-content">
+        <div class="modal-header py-2">
+          <h2 class="modal-title h5" id="p-titulo"></h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body p-0 bg-black">
+          <iframe id="p-frame" title="Juego" class="w-100 border-0 d-block" style="height:min(75vh,780px)" allow="autoplay"></iframe>
+        </div>
+        <!-- Controles táctiles: mandan teclas al juego (sólo en pantallas chicas) -->
+        <div class="modal-footer justify-content-center gap-2 d-lg-none" id="p-pad" style="touch-action:none;user-select:none">
+          <button type="button" class="btn btn-outline-warning" data-k="ArrowLeft" aria-label="Izquierda">◀</button>
+          <button type="button" class="btn btn-outline-warning" data-k="ArrowRight" aria-label="Derecha">▶</button>
+          <button type="button" class="btn btn-outline-warning" data-k="ArrowUp" aria-label="Arriba / impulso">▲</button>
+          <button type="button" class="btn btn-warning" data-k=" ">Disparo / Nitro</button>
+          <button type="button" class="btn btn-outline-secondary" data-k="p">Pausa</button>
+        </div>
+        <p class="text-secondary small text-center my-2 d-none d-lg-block">Teclado: flechas o A/D · Espacio · P para pausar</p>
+      </div>
+    </div>
+  </div>
+  <!-- Fin del modal para jugar -->
+
+  <!-- Aviso (toast) para confirmar acciones -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toast" class="toast text-bg-dark border" role="status" aria-live="polite" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body" id="toast-msg"></div>
+        <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+      </div>
+    </div>
+  </div>
+  <!-- Fin del toast -->
+
+
+  <!-- Bootstrap JS (menú, modal y toast) y anime.js v4 (animaciones) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@4/dist/bundles/anime.umd.min.js"></script>
+
+  <!-- ================= LÓGICA ================= -->
+  <script>
+    (() => {
+      const $ = (s, el = document) => el.querySelector(s);
+      const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+      // Guardado seguro en localStorage (no rompe si está bloqueado)
+      const store = {
+        get: (k) => { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } },
+        set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { } }
+      };
+      // Quita tildes y mayúsculas para que la búsqueda sea flexible
+      const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const precio = (j) => j.precio ? 'US$ ' + j.precio.toFixed(2).replace('.', ',') : 'Gratis';
+      const COLOR = { 'Instalado': 'success', 'Disponible': 'primary', 'Próximamente': 'secondary' };
+
+      // anime.js: si no cargó o el usuario pidió menos movimiento, todo funciona igual sin animar
+      const { animate, stagger } = window.anime || {};
+      const anim = !!animate && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const grilla = $('#grilla'), buscar = $('#buscar'), selGenero = $('#genero'),
+        selOrden = $('#orden'), swFav = $('#solo-favs'), modal = new bootstrap.Modal('#modalJuego');
+      const instalados = new Set(store.get('gv-instalados'));
+      const favs = new Set(store.get('gv-favs'));
+      let actual = null; // juego abierto en el modal
+
+      // 1) Leer los juegos desde la tabla HTML
+      const juegos = $$('#tabla-juegos tbody tr').map((tr) => {
+        const d = tr.dataset, c = tr.cells, [c1, c2] = d.c.split(',');
+        return {
+          tr, id: +d.id, nombre: c[1].textContent.trim(), genero: c[2].textContent.trim(),
+          anio: +c[3].textContent, precio: +d.precio, emoji: d.emoji, c1, c2, rating: +d.rating,
+          desc: d.desc, juego: d.juego || '', estado: instalados.has(+d.id) ? 'Instalado' : d.estado
+        };
+      });
+
+      // 2) Armar una tarjeta Bootstrap por juego
+      const tarjeta = (j) => `
+        <div class="col">
+          <div class="card h-100 shadow-sm juego" tabindex="0" aria-label="Ver detalle de ${j.nombre}">
+            <div class="cover" style="background:linear-gradient(135deg,${j.c1},${j.c2})">
+              <span class="display-1" aria-hidden="true">${j.emoji}</span>
+              <button type="button" class="btn btn-dark btn-fav position-absolute top-0 end-0 m-2" aria-label="Favorito"></button>
+            </div>
+            <div class="card-body">
+              <h3 class="h5 card-title">${j.nombre}</h3>
+              <span class="badge text-bg-info">${j.genero}</span>${j.juego ? ' <span class="badge text-bg-warning">Jugable</span>' : ''}
+              <p class="card-text text-secondary small mt-2 mb-0">${j.desc}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <span class="fw-semibold">${precio(j)}</span><span class="estado"></span>
+            </div>
+          </div>
+        </div>`;
+      juegos.forEach((j) => { grilla.insertAdjacentHTML('beforeend', tarjeta(j)); j.col = grilla.lastElementChild; });
+
+      // Opciones del filtro de género (salen de los datos)
+      [...new Set(juegos.map((j) => j.genero))].sort().forEach((g) => selGenero.add(new Option(g, g)));
+
+      // Sincroniza tarjeta y fila de tabla con el estado actual del juego
+      function refrescar(j) {
+        const badge = `<span class="badge text-bg-${COLOR[j.estado]}">${j.estado}</span>`;
+        $('.estado', j.col).innerHTML = badge;
+        j.tr.cells[5].innerHTML = badge;
+        const f = favs.has(j.id), b = $('.btn-fav', j.col);
+        b.textContent = f ? '♥' : '♡';
+        b.classList.toggle('text-danger', f);
+        b.setAttribute('aria-pressed', f);
+      }
+
+      // Número que sube animado (o directo si no hay animación)
+      function contar(el, n, pre = '') {
+        const o = { v: +el.dataset.v || 0 };
+        el.dataset.v = n;
+        if (!anim) { el.textContent = pre + n; return; }
+        animate(o, { v: n, duration: 800, ease: 'outExpo', onUpdate: () => { el.textContent = pre + Math.round(o.v); } });
+      }
+      function stats() {
+        const inst = juegos.filter((j) => j.estado === 'Instalado');
+        contar($('#st-total'), juegos.length);
+        contar($('#st-inst'), inst.length);
+        contar($('#st-favs'), favs.size);
+        contar($('#st-valor'), Math.round(inst.reduce((s, j) => s + j.precio, 0)), 'US$ ');
+        $('#badge-favs').textContent = favs.size;
+      }
+
+      // 3) Filtrar, ordenar y mostrar (tarjetas y tabla a la vez)
+      function render(animar = true) {
+        const q = norm(buscar.value), est = $('input[name=estado]:checked').value,
+          gen = selGenero.value, soloFav = swFav.checked;
+        const orden = {
+          id: (a, b) => a.id - b.id,
+          nombre: (a, b) => a.nombre.localeCompare(b.nombre, 'es'),
+          'precio-asc': (a, b) => a.precio - b.precio,
+          'precio-desc': (a, b) => b.precio - a.precio,
+          anio: (a, b) => b.anio - a.anio
+        }[selOrden.value];
+        const lista = juegos.filter((j) =>
+          (est === 'todos' || j.estado === est) && (gen === 'todos' || j.genero === gen) &&
+          (!soloFav || favs.has(j.id)) && norm(j.nombre + ' ' + j.genero).includes(q)).sort(orden);
+        juegos.forEach((j) => {
+          const ver = lista.includes(j);
+          j.col.classList.toggle('d-none', !ver);
+          j.tr.classList.toggle('d-none', !ver);
+        });
+        lista.forEach((j) => { grilla.append(j.col); j.tr.parentNode.append(j.tr); });
+        $('#contador').textContent = `Mostrando ${lista.length} de ${juegos.length} juegos`;
+        $('#vacio').classList.toggle('d-none', lista.length > 0);
+        if (anim && animar && lista.length) {
+          animate(lista.map((j) => j.col), { opacity: [0, 1], translateY: [18, 0], delay: stagger(45), duration: 500, ease: 'outCubic' });
+        }
+      }
+
+      // 4) Favoritos
+      function favorito(j) {
+        favs.has(j.id) ? favs.delete(j.id) : favs.add(j.id);
+        store.set('gv-favs', [...favs]);
+        refrescar(j); stats(); pintarFav(j);
+        if (swFav.checked) render(false);
+      }
+      const pintarFav = (j) => { $('#m-fav').textContent = favs.has(j.id) ? '♥ En favoritos' : '♡ Favorito'; };
+
+      // 5) Modal de detalle
+      function botones(j) {
+        const [clase, texto] = {
+          'Instalado': ['btn-success', '▶ Jugar'],
+          'Disponible': ['btn-primary', 'Comprar e instalar'],
+          'Próximamente': ['btn-outline-secondary', '🔔 Avisarme']
+        }[j.estado];
+        const a = $('#m-accion');
+        a.className = 'btn ' + clase; a.textContent = texto; a.disabled = !!j.instalando;
+        pintarFav(j);
+      }
+      function abrir(j) {
+        actual = j;
+        $('#m-titulo').textContent = j.nombre;
+        $('#m-cover').style.background = `linear-gradient(135deg,${j.c1},${j.c2})`;
+        $('#m-emoji').textContent = j.emoji;
+        $('#m-genero').textContent = `${j.genero} · ${j.anio}`;
+        const r = Math.round(j.rating);
+        $('#m-rating').textContent = '★'.repeat(r) + '☆'.repeat(5 - r) + ' ' + j.rating.toFixed(1);
+        $('#m-desc').textContent = j.desc;
+        $('#m-precio').textContent = precio(j);
+        $('#m-progreso').classList.add('d-none');
+        botones(j);
+        modal.show();
+      }
+      function aviso(msg) {
+        $('#toast-msg').textContent = msg;
+        bootstrap.Toast.getOrCreateInstance('#toast', { delay: 2500 }).show();
+      }
+      // Instalación simulada con barra de progreso
+      function instalar(j) {
+        const caja = $('#m-progreso'), barra = $('#m-barra');
+        j.instalando = true; caja.classList.remove('d-none'); botones(j);
+        $('#m-accion').textContent = 'Instalando…';
+        let p = 0;
+        const t = setInterval(() => {
+          p = Math.min(100, p + 4 + Math.random() * 10);
+          barra.style.width = p + '%'; barra.textContent = Math.round(p) + '%';
+          caja.setAttribute('aria-valuenow', Math.round(p));
+          if (p < 100) return;
+          clearInterval(t);
+          j.instalando = false; j.estado = 'Instalado';
+          instalados.add(j.id); store.set('gv-instalados', [...instalados]);
+          refrescar(j); stats(); render(false); aviso(`${j.nombre} instalado ✔`);
+          if (actual === j) { caja.classList.add('d-none'); botones(j); }
+        }, 120);
+      }
+
+      // Jugar: carga el juego en un iframe y le manda el foco para que reciba el teclado
+      const modalPlay = new bootstrap.Modal('#modalPlay'), frame = $('#p-frame');
+      function jugar(j) {
+        $('#p-titulo').textContent = j.nombre;
+        $('#modalJuego').addEventListener('hidden.bs.modal', () => { frame.src = j.juego; modalPlay.show(); }, { once: true });
+        modal.hide();
+      }
+      frame.addEventListener('load', () => { if (frame.src.includes('juegos/')) frame.contentWindow.focus(); });
+      $('#modalPlay').addEventListener('hidden.bs.modal', () => { frame.src = 'about:blank'; }); // corta el juego al cerrar
+      // Botones táctiles -> eventos de teclado dentro del iframe (mismo origen)
+      const tecla = (tipo, k) => { const w = frame.contentWindow; w.dispatchEvent(new w.KeyboardEvent(tipo, { key: k, bubbles: true, cancelable: true })); };
+      $$('#p-pad button').forEach((b) => {
+        b.addEventListener('pointerdown', (e) => { e.preventDefault(); tecla('keydown', b.dataset.k); });
+        ['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => b.addEventListener(ev, () => tecla('keyup', b.dataset.k)));
+      });
+
+      // 6) Eventos
+      $('#m-accion').addEventListener('click', () => {
+        const j = actual;
+        if (j.estado === 'Instalado') j.juego ? jugar(j) : aviso(`Iniciando ${j.nombre}…`);
+        else if (j.estado === 'Próximamente') aviso(`Te avisamos cuando salga ${j.nombre}`);
+        else instalar(j);
+      });
+      $('#m-fav').addEventListener('click', () => favorito(actual));
+      grilla.addEventListener('click', (e) => {
+        const col = e.target.closest('#grilla > .col'); if (!col) return;
+        const j = juegos.find((x) => x.col === col);
+        e.target.closest('.btn-fav') ? favorito(j) : abrir(j);
+      });
+      grilla.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.classList.contains('juego')) abrir(juegos.find((x) => x.col === e.target.parentNode));
+      });
+      $('#tabla-juegos tbody').addEventListener('click', (e) => {
+        const tr = e.target.closest('tr'); if (tr) abrir(juegos.find((x) => x.tr === tr));
+      });
+      $$('input[name=estado]').forEach((r) => r.addEventListener('change', () => render()));
+      [selGenero, selOrden, swFav].forEach((el) => el.addEventListener('change', () => render()));
+      buscar.addEventListener('input', () => render(false));
+      const irAlCatalogo = () => $('#catalogo').scrollIntoView();
+      $('#form-buscar').addEventListener('submit', (e) => { e.preventDefault(); irAlCatalogo(); });
+      $('#btn-favs').addEventListener('click', () => { swFav.checked = !swFav.checked; render(); irAlCatalogo(); });
+      $('#limpiar').addEventListener('click', () => {
+        buscar.value = ''; selGenero.value = 'todos'; selOrden.value = 'id';
+        swFav.checked = false; $('#e-todos').checked = true; render();
+      });
+
+      // 7) Arranque
+      juegos.forEach(refrescar);
+      stats();
+      render();
+      if (anim) animate('.hero > *', { opacity: [0, 1], translateY: [24, 0], delay: stagger(120), duration: 800, ease: 'outExpo' });
+    })();
+  </script>
+  <!-- Fin de la lógica -->
+
+</body>
+
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asteroides - TP10 Laboratorio de Programación</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="game-container">
+    <h1>ASTEROIDES</h1>
+
+    <div id="hud">
+      <div id="score">Puntaje: <span id="score-value">0</span></div>
+      <div id="lives">Vidas: <span id="lives-value">3</span></div>
+      <div id="level">Nivel: <span id="level-value">1</span></div>
+      <div id="highscore">Récord: <span id="highscore-value">0</span></div>
+      <button id="mute-btn" aria-label="Silenciar sonido">🔊</button>
+    </div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <div id="overlay">
+      <div id="start-screen" class="screen">
+        <h2>Nave Espacial</h2>
+        <p>Destruí los asteroides antes de que te choquen.</p>
+        <p class="controls">
+          ⬅️ ➡️ : Rotar &nbsp;&nbsp; ⬆️ : Impulso &nbsp;&nbsp; ESPACIO : Disparar
+        </p>
+        <p class="controls">P / ESC : Pausar</p>
+        <button id="start-btn">Jugar</button>
+      </div>
+
+      <div id="gameover-screen" class="screen hidden">
+        <h2>Fin del juego</h2>
+        <p>Puntaje final: <span id="final-score">0</span></p>
+        <p id="new-record" class="hidden">¡Nuevo récord! 🏆</p>
+        <button id="restart-btn">Jugar de nuevo</button>
+      </div>
+
+      <div id="pause-screen" class="screen hidden">
+        <h2>Pausa</h2>
+        <p>Presioná P o ESC para continuar</p>
+      </div>
+    </div>
+
+    <p class="footer">TP10 - Laboratorio de Programación 6° G</p>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
